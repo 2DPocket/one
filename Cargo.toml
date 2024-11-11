@@ -1,0 +1,8 @@
+[package]
+name = "one"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.28.1"
+crossterm = "0.28.1"
