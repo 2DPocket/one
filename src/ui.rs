@@ -32,27 +32,27 @@ pub fn ui(frame: &mut Frame, app: &App) {
         //.style(Style::default().fg(Color::LightYellow).bg(Color::Black));
         .style(Style::default());
 
-    let current_dir_path = Paragraph::new(Text::styled(
-        app.path(), 
-        Style::default().fg(Color::Green),))
-        .block(current_dir_block);
+    // let current_dir_path = Paragraph::new(Text::styled(
+    //     app.path(), 
+    //     Style::default().fg(Color::Green),))
+    //     .block(current_dir_block);
 
-    frame.render_widget(current_dir_path, chunks[0]);
+    // frame.render_widget(current_dir_path, chunks[0]);
 
     ///////////////////////////////
     // ファイルリスト
-    let items:Vec<ListItem> = app.file_names()
-    .iter()
-    .map(|file| {
-      let file_name = match file {
-        PathKind::FILE(name) => format!("📄 {}", name),
-        PathKind::DIR(name) => format!("📁 {}", name),
-      };
-      ListItem::new(Span::raw(file_name))
-    })
-    .collect();
+    // let items:Vec<ListItem> = app.file_names()
+    // .iter()
+    // .map(|file| {
+    //   let file_name = match file {
+    //     PathKind::FILE(name) => format!("📄 {}", name),
+    //     PathKind::DIR(name) => format!("📁 {}", name),
+    //   };
+    //   ListItem::new(Span::raw(file_name))
+    // })
+    // .collect();
 
-    let file_list = List::new(items);
-    frame.render_widget(file_list, chunks[1]);
+    // let file_list = List::new(items);
+    // frame.render_widget(file_list, chunks[1]);
 
 }
