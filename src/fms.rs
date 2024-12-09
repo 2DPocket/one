@@ -170,7 +170,7 @@ pub fn list_files_in_directory(dir: &str) -> io::Result<Vec<PathKind>> {
                 add_file_info(&mut file_list, file_no, file_name, &metadata, path.is_dir())?;
             } else {
                 println!("{:?}", entry.file_name().to_str());
-                return Err(Error::new(ErrorKind::Other, "ファイ名変換でエラー"));
+                return Err(Error::new(ErrorKind::Other, "ファイル名の変換に失敗しました"));
             }
         }
     }
