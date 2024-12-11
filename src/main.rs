@@ -4,7 +4,7 @@ use std::{error::Error, io, path::Path};
 use fms::PathKind;
 use ratatui::{
     backend::{Backend, CrosstermBackend}, crossterm::{
-        event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
+        event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
         execute,
         terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     }, layout::Alignment, style::{Color, Style}, Terminal
@@ -15,18 +15,10 @@ mod app;
 use crate::app::App;
 
 mod header;
-use crate::header::HeaderWidget;
-
 mod body;
-
 mod footer;
-use crate::footer::FooterWidget;
-
-mod ui;
-use crate::ui::ui;
-
+mod error_message;
 mod fms;
-
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -44,9 +36,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     ///////////////////////////////
     // Run the app
-    // let mut app = App::new(".")?;
-    let mut app = App::new("c:/xampp/php")?;
-    let res = run_app(&mut terminal, &app);
+    let app = App::new(".")?;
+    let _res = run_app(&mut terminal, &app);
 
     ///////////////////////////////
     // Application post-run steps
@@ -90,6 +81,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &App) -> io::Result<()> 
 
         if let Event::Key(key) = event::read()? {
             if key.kind == event::KeyEventKind::Release {
+                continue;
+            }
+
+            // エラーメッセージが表示されている場合は、何かキーを押すと消える
+            if app.is_show_error_message() {
+                app.clear_error_message();
                 continue;
             }
 
@@ -146,7 +143,9 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &App) -> io::Result<()> 
                             Path::new(&app.dir_path()).join(&dir.file_name)
                         };
                         let new_dir_path = new_dir_path.to_str().unwrap();
-                        app.set_dir_path(&new_dir_path);
+                        if let Err(e) = app.set_dir_path(&new_dir_path) {
+                            app.set_error_message(&e.to_string());
+                        }
                     }
                 }
 

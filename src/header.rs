@@ -1,4 +1,4 @@
-use ratatui::{buffer::Buffer, layout::{Alignment, Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style, Stylize}, symbols::border, text::{Line, Span}, widgets::{Block, Paragraph, Widget}
+use ratatui::{buffer::Buffer, layout::{Alignment, Rect}, style::{Color, Style}, symbols::border, text::{Line, Span}, widgets::{Block, Paragraph, Widget}
 };
 
 use crate::{app::App, utils::div_cell};

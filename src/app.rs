@@ -4,6 +4,7 @@ use std::cell::{Ref, RefCell};
 use std::{cell::Cell, io};
 use ratatui::{layout::{Constraint, Direction, Layout}, Frame};
 
+use crate::error_message::popup_error_message;
 use crate::fms::{PathKind, list_files_in_directory};
 
 use crate::header::HeaderWidget;
@@ -23,6 +24,7 @@ pub struct App {
     files: RefCell<Vec<PathKind>>,
     focused_file_index: Cell<usize>,
     max_files_per_page: Cell<usize>,
+    error_message: RefCell<Option<String>>,
 }
 
 // App構造体の実装
@@ -36,6 +38,7 @@ impl App {
             files: RefCell::new(files),
             focused_file_index: Cell::new(0),      
             max_files_per_page: Cell::new(0),      
+            error_message: RefCell::new(None),
         })
     }
 
@@ -46,11 +49,12 @@ impl App {
 
     /// ディレクトリパスを設定する
     /// ディレクトリ内のファイル一覧を取得し、フォーカスファイル番号を0に設定します
-    pub fn set_dir_path(&self, dir_path: &str) {
-        self.dir_path.replace(dir_path.into());
-        let files = list_files_in_directory(dir_path).unwrap();
+    pub fn set_dir_path(&self, dir_path: &str) -> Result<(), io::Error> {
+        let files = list_files_in_directory(dir_path)?;
         self.files.replace(files);
+        self.dir_path.replace(dir_path.into());
         self.focused_file_index.set(0);
+        Ok(())
     }
 
     /// ファイル一覧を取得する
@@ -92,6 +96,22 @@ impl App {
         (self.focused_file_index.get() / self.max_files_per_page.get()) + 1
     }
 
+    pub fn error_message(&self) -> Ref<Option<String>> {
+        self.error_message.borrow()
+    }
+
+    pub fn set_error_message(&self, message: &str) {
+        self.error_message.replace(Some(message.to_string()));
+    }
+
+    pub fn clear_error_message(&self) {
+        self.error_message.replace(None);
+    }
+
+    pub fn is_show_error_message(&self) -> bool {
+        self.error_message.borrow().is_some()
+    }
+
     /// ターミナルに描画する
     pub fn draw(&self, frame: &mut Frame) {
         let chunks = Layout::default()
@@ -117,6 +137,8 @@ impl App {
 
         }
 
+        // エラーメッセージ描画
+        popup_error_message(&self, frame);
     }
 
 }

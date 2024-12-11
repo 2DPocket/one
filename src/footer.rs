@@ -1,4 +1,4 @@
-use ratatui::{buffer::Buffer, layout::{Alignment, Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style, Stylize}, text::{Line, Span}, widgets::{Block, Paragraph, Widget}
+use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Style}, text::{Line, Span}, widgets::Widget
 };
 
 pub struct FooterWidget;
@@ -29,7 +29,7 @@ impl FunctionKeyWidget {
 
 impl Widget for FunctionKeyWidget {
     fn render (self, area: Rect, buf: &mut Buffer) {
-        let mut keys:Vec<(FunctionKeyWidget)> = Vec::new();
+        let mut keys:Vec<FunctionKeyWidget> = Vec::new();
         keys.push(FunctionKeyWidget::new("終了", "F1"));
         // keys.push(FunctionKeyWidget::new("XXXX", "F2"));
         

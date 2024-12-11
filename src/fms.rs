@@ -22,7 +22,6 @@ use unicode_width::UnicodeWidthStr;
 /// 
 #[derive(Clone, Debug)]
 pub struct FileInformation {
-    pub file_no: u16,
     pub file_name: String,
     pub file_size: u64,
     pub last_modified: Option<DateTime<Local>>,
@@ -151,7 +150,7 @@ pub enum PathKind {
 /// # 戻り値
 /// `Vec<PathKind>` - ファイル一覧
 
-pub fn list_files_in_directory(dir: &str) -> io::Result<Vec<PathKind>> {
+pub fn list_files_in_directory(dir: &str) -> Result<Vec<PathKind>, io::Error> {
     let directory_path = Path::new(dir);
     let mut file_list: Vec<PathKind> = Vec::new();
 
@@ -159,18 +158,23 @@ pub fn list_files_in_directory(dir: &str) -> io::Result<Vec<PathKind>> {
         return Err(Error::new(ErrorKind::Other, "指定されたパスはディレクトリではありません"));
     } else {
         // ディレクトリの場合は ..（親ディレクトリ） を追加
-        let mut file_no = 0;
-        file_list.push(PathKind::DIR(FileInformation {file_no, file_name: "..".to_string(), file_size: 0, last_modified: None}));
-        for entry in fs::read_dir(directory_path)? {
-            file_no += 1;
-            let entry = entry?;
-            let path = entry.path();
-            let metadata  = entry.metadata()?;
-            if let Some(file_name )= entry.file_name().to_str() {
-                add_file_info(&mut file_list, file_no, file_name, &metadata, path.is_dir())?;
-            } else {
-                println!("{:?}", entry.file_name().to_str());
-                return Err(Error::new(ErrorKind::Other, "ファイル名の変換に失敗しました"));
+        file_list.push(PathKind::DIR(FileInformation {file_name: "..".to_string(), file_size: 0, last_modified: None}));
+        match fs::read_dir(directory_path) {
+            Err(e) => {
+                return Err(e);
+            }
+            Ok(entries) => {
+                for entry in entries {
+                    let entry = entry?;
+                    let path = entry.path();
+                    let metadata  = entry.metadata()?;
+                    if let Some(file_name )= entry.file_name().to_str() {
+                        add_file_info(&mut file_list, file_name, &metadata, path.is_dir())?;
+                    } else {
+                        println!("{:?}", entry.file_name().to_str());
+                        return Err(Error::new(ErrorKind::Other, "ファイル名の変換に失敗しました"));
+                    }
+                }
             }
         }
     }
@@ -193,16 +197,14 @@ pub fn list_files_in_directory(dir: &str) -> io::Result<Vec<PathKind>> {
 /// 
 /// # 引数
 /// * `file_list` - ファイル情報を格納するベクター
-/// * `file_no` - ファイル番号
 /// * `file_name` - ファイル名
 /// * `metadata` - ファイルのメタデータ
 /// * `is_dir` - ディレクトリかどうかを示すブール値
 /// 
 /// # 戻り値
 /// `io::Result<()>` - 成功した場合は空のタプルを返す
-fn add_file_info(file_list: &mut Vec<PathKind>, file_no: u16, file_name: &str, metadata: &Metadata, is_dir: bool) ->io::Result<()>{
+fn add_file_info(file_list: &mut Vec<PathKind>, file_name: &str, metadata: &Metadata, is_dir: bool) ->io::Result<()>{
     let file_info = FileInformation {
-        file_no,
         file_name: file_name.to_string(),
         file_size: metadata.len(),
         last_modified: Some(metadata.modified()?.into()),

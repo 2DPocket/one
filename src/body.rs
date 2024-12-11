@@ -1,6 +1,6 @@
 use std::vec;
 
-use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Style}, text::{Line, Span}, widgets::{Block, List, ListItem, Widget}
+use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Style}, text::{Line, Span}, widgets::{List, ListItem, Widget}
 };
 
 use crate::{app::App, fms::PathKind};
