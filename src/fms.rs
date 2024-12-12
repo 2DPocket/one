@@ -157,8 +157,6 @@ pub fn list_files_in_directory(dir: &str) -> Result<Vec<PathKind>, io::Error> {
     if !directory_path.is_dir() {
         return Err(Error::new(ErrorKind::Other, "指定されたパスはディレクトリではありません"));
     } else {
-        // ディレクトリの場合は ..（親ディレクトリ） を追加
-        file_list.push(PathKind::DIR(FileInformation {file_name: "..".to_string(), file_size: 0, last_modified: None}));
         match fs::read_dir(directory_path) {
             Err(e) => {
                 return Err(e);
@@ -189,6 +187,11 @@ pub fn list_files_in_directory(dir: &str) -> Result<Vec<PathKind>, io::Error> {
             (PathKind::FILE(a), PathKind::FILE(b)) => a.file_name.cmp(&b.file_name),
         }
     });
+
+    // 親ディレクトリがある場合だけ、file_listの先頭に..を追加
+    if directory_path.parent().is_some() {
+        file_list.insert(0, PathKind::DIR(FileInformation {file_name: "..".to_string(), file_size: 0, last_modified: None}));
+    }
 
     Ok(file_list)
 }
