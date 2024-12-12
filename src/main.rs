@@ -36,7 +36,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     ///////////////////////////////
     // Run the app
-    let app = App::new(".")?;
+    let current_dir = std::env::current_dir()?;
+    let app = App::new(current_dir.to_str().unwrap())?;
     let _res = run_app(&mut terminal, &app);
 
     ///////////////////////////////
