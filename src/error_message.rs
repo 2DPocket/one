@@ -30,7 +30,7 @@ impl Widget for ErrorMessageWidget<'_> {
     
             let popup_layout = centered_rect(60, 20, area);
     
-            Clear::default().render(popup_layout, buf);;
+            Clear::default().render(popup_layout, buf);
             message_text.render(popup_layout, buf);
         }
     
