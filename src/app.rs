@@ -4,12 +4,12 @@ use std::cell::{Ref, RefCell};
 use std::{cell::Cell, io};
 use ratatui::{layout::{Constraint, Direction, Layout}, Frame};
 
-use crate::error_message::popup_error_message;
 use crate::fms::{PathKind, list_files_in_directory};
 
 use crate::header::HeaderWidget;
 use crate::body::BodyWidget;
 use crate::footer::FooterWidget;
+use crate::error_message::ErrorMessageWidget;
 
 /// アプリケーション状態管理構造体
 /// 
@@ -135,10 +135,12 @@ impl App {
             let footer_widget = FooterWidget;
             frame.render_widget(footer_widget, footer);
 
+            // エラーメッセージ描画
+            let error_message_widget = ErrorMessageWidget::new(self);
+            frame.render_widget(error_message_widget, frame.area());
+
         }
 
-        // エラーメッセージ描画
-        popup_error_message(&self, frame);
     }
 
 }
