@@ -1,7 +1,17 @@
 [package]
 name = "one"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = true
+codegen-units = 1
+panic = 'abort'
 
 [dependencies]
 ratatui = "0.28.1"
