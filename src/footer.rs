@@ -1,24 +1,13 @@
 use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Style}, text::{Line, Span}, widgets::Widget
 };
 
-pub struct FooterWidget;
 
-impl Widget for FooterWidget {
-    fn render (self, area: Rect, buf: &mut Buffer) {
-
-        let fnc1 = FunctionKeyWidget::new("Quit", "F1");
-        fnc1.render(area, buf);
-        let fnc2 = FunctionKeyWidget::new("Quit", "F2");
-        fnc2.render(area, buf);
-    }
-}
-
-pub struct FunctionKeyWidget {
+pub struct FunctionKey {
     label: String,
     key: String,
 }
 
-impl FunctionKeyWidget {
+impl FunctionKey {
     pub fn new(label: &str, key: &str) -> Self {
         Self {
             label: label.to_string(),
@@ -27,10 +16,12 @@ impl FunctionKeyWidget {
     }
 }
 
-impl Widget for FunctionKeyWidget {
+pub struct FooterWidget;
+
+impl Widget for FooterWidget {
     fn render (self, area: Rect, buf: &mut Buffer) {
-        let mut keys:Vec<FunctionKeyWidget> = Vec::new();
-        keys.push(FunctionKeyWidget::new("終了", "F1"));
+        let mut keys:Vec<FunctionKey> = Vec::new();
+        keys.push(FunctionKey::new("終了", "q"));
         // keys.push(FunctionKeyWidget::new("XXXX", "F2"));
         
         const KEY_LABEL_LENGTH: u16 = 12;
@@ -47,7 +38,7 @@ impl Widget for FunctionKeyWidget {
                 Span::styled(" ", Style::default().bg(Color::Gray)),
                 Span::styled(&key.label, Style::default().fg(Color::Black).bg(Color::Gray)),
                 Span::styled(" ", Style::default().bg(Color::Gray)),
-                Span::styled(&key.key, Style::default().fg(Color::Yellow).bg(Color::Gray)),
+                Span::styled(format!("<{}>", &key.key), Style::default().fg(Color::LightBlue).bg(Color::Gray)),
                 Span::styled(" ", Style::default().bg(Color::Gray)),
             ]);
             

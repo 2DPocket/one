@@ -15,7 +15,7 @@ pub enum AppEvent {
 
 pub fn main_key_event(app: &App, key_event: &KeyEvent) -> Result<AppEvent, io::Error> {
     match key_event.code {
-        KeyCode::F(1) => {
+        KeyCode::Char('q') => {
             Ok(AppEvent::QUIT)
         }
         KeyCode::Down => {
